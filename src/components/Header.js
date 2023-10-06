@@ -20,7 +20,7 @@ export const CustomHeader = () => {
                 <HeaderGlobalAction aria-label="Notifications">
                     <Notification size={20} />
                 </HeaderGlobalAction>
-                <HeaderGlobalAction tooltipAlignment="end" id="switcher-button">
+                <HeaderGlobalAction aria-label="Menu" tooltipAlignment="end" id="switcher-button">
                     <SwitcherIcon size={20} />
                 </HeaderGlobalAction>
             </HeaderGlobalBar>
