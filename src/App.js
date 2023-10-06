@@ -10,7 +10,7 @@ function App() {
         <Column lg={{ start: 7, end: 11 }} md={{ start: 4, end: 7 }} sm={{ start: 2 }}>
           <Form aria-label="">
             <Stack gap={5}>
-              <TextArea labelText="Text Area label" rows={2} id="text-area-1" />
+              <TextArea labelText="Provide a prompt:" rows={2} id="text-area-1" />
 
               <RadioButtonGroup name="radio-button-group" defaultSelected="Greedy">
                 <RadioButton value="Greedy" id="radio-1" labelText="Greedy" />
