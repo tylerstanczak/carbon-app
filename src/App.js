@@ -1,8 +1,24 @@
-import { Stack, TextArea, RadioButton, RadioButtonGroup, Button, Form, Grid, Column } from '@carbon/react';
+import { Stack, TextArea, RadioButton, RadioButtonGroup, Button, Form, Grid, Column, ProgressBar } from '@carbon/react';
 import { CustomHeader } from './components/Header';
 import './App.css';
+import { useState } from 'react';
+const API_URL = process.env.API_URL;
 
 function App() {
+  const [providedPrompt, setProvidedPrompt] = useState("");
+  const [optimizedPrompt, setOptimizedPrompt] = useState("");
+  const [loadingPrompt, setLoadingPrompt] = useState(false);
+
+  const submitPrompt = async prompt => {
+    setLoadingPrompt(true);
+    const optimizedPrompt = await fetch(API_URL, {
+      method: "POST",
+      body: prompt
+    });
+    setOptimizedPrompt(optimizedPrompt);
+    setLoadingPrompt(false);
+  };
+
   return (
     <div>
       <CustomHeader />
@@ -17,7 +33,8 @@ function App() {
                 <RadioButton value="Sample" labelText="Sample" id="radio-2" />
               </RadioButtonGroup>
 
-              <Button>Submit</Button>
+              <Button onSubmit={submitPrompt(providedPrompt)}>Submit</Button>
+              loading && <ProgressBar label="Optimizing Prompt" />
             </Stack>
           </Form>
         </Column>
