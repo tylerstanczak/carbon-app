@@ -2,14 +2,12 @@ import {
     Header,
     HeaderName,
     HeaderGlobalBar,
-    HeaderGlobalAction,
-    HeaderSideNavItems
+    HeaderGlobalAction
 } from "@carbon/react";
 import { Search, Notification, Switcher as SwitcherIcon } from '@carbon/icons-react';
 export const CustomHeader = () => {
     return (
         <Header aria-label="IBM WatsonX">
-            <HeaderSideNavItems>asdf</HeaderSideNavItems>
             <HeaderName href="#" prefix="IBM">
                 WatsonX
             </HeaderName>
