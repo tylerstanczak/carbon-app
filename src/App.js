@@ -9,6 +9,12 @@ function App() {
   const [decodingMethod, setDecodingMethod] = useState("Greedy");
   const [optimizedPrompt, setOptimizedPrompt] = useState("");
   const [loadingPrompt, setLoadingPrompt] = useState(false);
+  const [starts, setStarts] = useState({
+    lg: 7,
+    md: 4,
+    sm: 2
+  });
+  const [rougeScores, setRougeScores] = useState(["",""]);
 
   const submitPrompt = async event => {
     event.preventDefault();
@@ -23,6 +29,12 @@ function App() {
         })
     });
     setOptimizedPrompt(optimizedPrompt);
+    setRougeScores(["Rouge Score: 0.25", "Rouge Score: 0.25"]);
+    setStarts({
+      lg: 3,
+      md: 2,
+      sm: 1
+    })
     setLoadingPrompt(false);
   };
 
@@ -30,16 +42,46 @@ function App() {
     <div>
       <CustomHeader />
       <Grid fullWidth style={{ marginTop: '300px' }}>
-        <Column lg={{ start: 7, end: 11 }} md={{ start: 4, end: 7 }} sm={{ start: 2 }}>
-          <Form aria-label="" onSubmit={submitPrompt}>
-            <Stack gap={5}>
-              <TextArea labelText="Provide a prompt:" rows={2} id="text-area-1" />
-              <DecodingMethodRadioGroup setDecodingMethod={setDecodingMethod}/>
-              <Button type="submit">Submit</Button>
-              {loadingPrompt && <ProgressBar label="Optimizing Prompt" />}
-            </Stack>
-          </Form>
+        <Column
+          lg={{ start: starts.lg, end: starts.lg+4 }}
+          md={{ start: starts.md, end: starts.md+3 }}
+          sm={{ start: starts.sm }}
+        >
+          <Stack gap={5}>
+            <Form aria-label="" onSubmit={submitPrompt} className={loadingPrompt ? 'blur' : ''}>
+              <Stack gap={5}>
+                <TextArea
+                  labelText="Provide a prompt:"
+                  helperText={rougeScores[0]}
+                  rows={2} id="text-area-1"
+                />
+                {!optimizedPrompt &&
+                  <> 
+                  <DecodingMethodRadioGroup setDecodingMethod={setDecodingMethod}/>
+                  <Button type="submit">Submit</Button>
+                  </>
+                }
+              </Stack>
+            </Form>
+            {loadingPrompt && <ProgressBar helperText="Optimizing Prompt"/>}
+          </Stack>
         </Column>
+        {optimizedPrompt &&
+        <Column
+          lg={{ start: 9, end: 13 }}
+          md={{ start: 5, end: 8 }}
+          sm={{ start: 0 }}
+        >
+          <Stack gap={5}>
+            <TextArea
+              labelText="Optimized prompt:"
+              defaultValue={optimizedPrompt}
+              helperText={rougeScores[1]}
+              rows={16}
+              id="text-area-2"
+            />
+          </Stack>
+        </Column>}
       </Grid>
     </div>
   );
