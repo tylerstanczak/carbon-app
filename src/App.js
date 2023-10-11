@@ -5,15 +5,15 @@ import { OtherPrompts } from './components/OtherPrompts';
 import { WordAnalysis } from './components/WordAnalysis';
 
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 const API_URL = process.env.API_URL || "http://localhost:5000/";
 
 function App() {
   const [loading, setLoading] = useState(false);
   const [starts, setStarts] = useState({
-    lg: 2, // 7
-    md: 1, // 4
-    sm: 0 // 2
+    lg: 7,
+    md: 4,
+    sm: 2
   });
   const [decodingMethod, setDecodingMethod] = useState("Sample");
   const [depth, setDepth] = useState(5);
@@ -21,12 +21,6 @@ function App() {
   const [bestPrompt, setBestPrompt] = useState('')
   const [rougeScores, setRougeScores] = useState([0, 0]);
   const [percentIncrease, setPercentIncrease] = useState(0);
-
-  useEffect(() => {
-    setRougeScores([promptData.original_rouge_score, promptData.best_rouge_score]);
-    setBestPrompt(promptData.best_prompt)
-    setPercentIncrease(promptData.percentage_increase);
-  }, [promptData.original_rouge_score, promptData.best_rouge_score, promptData.best_prompt, promptData.percentage_increase]);
 
   const submitPrompt = async event => {
     event.preventDefault();
@@ -51,11 +45,14 @@ function App() {
     
       const promptData = await response.json();
       setPromptData(promptData);
+      setRougeScores([promptData.original_rouge_score, promptData.best_rouge_score]);
+      setBestPrompt(promptData.best_prompt)
+      setPercentIncrease(promptData.percentage_increase);
 
       setStarts({
-        lg: 1,
+        lg: 2,
         md: 1,
-        sm: 1
+        sm: 0
       })
       setLoading(false);
     } catch (e) {
