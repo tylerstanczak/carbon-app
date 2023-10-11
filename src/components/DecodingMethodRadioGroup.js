@@ -4,7 +4,7 @@ export const DecodingMethodRadioGroup = ({ setDecodingMethod }) => {
     <RadioButtonGroup
       legendText="Decoding Method"
       name="radio-button-group"
-      defaultSelected={"Greedy"}
+      defaultSelected={"Sample"}
       onChange={selection => setDecodingMethod(selection)}
     >
       <RadioButton value="Greedy" labelText="Greedy" id="radio-1" />

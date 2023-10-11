@@ -3,7 +3,7 @@ import { CustomHeader, } from './components/Header';
 import { DecodingMethodRadioGroup } from './components/DecodingMethodRadioGroup';
 import './App.css';
 import { useState } from 'react';
-const API_URL = process.env.API_URL || "http://localhost:3000";
+const API_URL = process.env.API_URL || "localhost:5000";
 
 function App() {
   const [decodingMethod, setDecodingMethod] = useState("Greedy");
@@ -21,11 +21,11 @@ function App() {
     setLoadingPrompt(true);
     let providedPrompt = document.getElementById("text-area-1").value;
     const optimizedPrompt = await fetch(API_URL, {
-      method: "POST",
+      method: "GET",
       body: JSON.stringify(
         {
           prompt: providedPrompt,
-          decodingMethod,
+          n: 'two',
         })
     });
     setOptimizedPrompt(optimizedPrompt);
