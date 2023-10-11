@@ -5,7 +5,6 @@ import { OtherPrompts } from './components/OtherPrompts';
 import { WordAnalysis } from './components/WordAnalysis';
 
 import './App.css';
-import pdJson from './promptData';
 import { useEffect, useState } from 'react';
 const API_URL = process.env.API_URL || "http://localhost:5000/";
 
@@ -18,7 +17,7 @@ function App() {
   });
   const [decodingMethod, setDecodingMethod] = useState("Sample");
   const [depth, setDepth] = useState(5);
-  const [promptData, setPromptData] = useState(pdJson);
+  const [promptData, setPromptData] = useState(null);
   const [bestPrompt, setBestPrompt] = useState('')
   const [rougeScores, setRougeScores] = useState([0, 0]);
   const [percentIncrease, setPercentIncrease] = useState(0);
