@@ -68,13 +68,13 @@ export const WordAnalysis = ({ influentialWords }) => {
     const data = {
         datasets: [
           {
-            label: 'Positive Delta',
+            label: 'Positive Influence',
             data: positiveData,
             borderColor: 'rgb(53, 162, 235)', // Blue
             backgroundColor: 'rgba(53, 162, 235, 0.5)', // Blue
           },
           {
-            label: 'Negative Delta',
+            label: 'Negative Influence',
             data: negativeData,
             borderColor: 'rgb(255, 99, 132)', // Red
             backgroundColor: 'rgba(255, 99, 132, 0.5)', // Red

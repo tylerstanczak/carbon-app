@@ -6,7 +6,7 @@ import { WordAnalysis } from './components/WordAnalysis';
 
 import './App.css';
 import { useState } from 'react';
-const API_URL = process.env.API_URL || "http://localhost:5000/";
+const API_URL = process.env.API_URL || "http://localhost:8000/";
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -76,7 +76,7 @@ function App() {
               <Stack gap={5} className='mb-2'>
                 <TextArea
                   labelText={!promptData ? "Provide a prompt:" : "Original Prompt"}
-                  helperText={`Rouge Score: ${rougeScores[0]}`}
+                  helperText={rougeScores[0] ? `Rouge Score: ${rougeScores[0]}` : ''}
                   rows={2} id="text-area-1"
                 />
                 {!promptData &&
@@ -117,6 +117,8 @@ function App() {
               sm={{ start: 0 }}
             >
               <OtherPrompts rows={promptData["optimized_rouge_scores_df"]} />
+              <br/>
+              <hr/>
               <WordAnalysis influentialWords={promptData["top_influential_words"]} />  
             </Column>
         }
