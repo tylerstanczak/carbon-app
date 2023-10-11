@@ -1,4 +1,4 @@
-import { Stack, TextArea, Button, Form, Grid, Column, ProgressBar } from '@carbon/react';
+import { Stack, TextArea, Button, Form, Grid, Column, ProgressBar, NumberInput } from '@carbon/react';
 import { CustomHeader, } from './components/Header';
 import { DecodingMethodRadioGroup } from './components/DecodingMethodRadioGroup';
 import { OtherPrompts } from './components/OtherPrompts';
@@ -16,6 +16,7 @@ function App() {
     sm: 2
   });
   const [decodingMethod, setDecodingMethod] = useState("Sample");
+  const [n, setN] = useState(0);
   const [promptData, setPromptData] = useState(null);
   const [bestPrompt, setBestPrompt] = useState('')
   const [rougeScores, setRougeScores] = useState(["",""]);
@@ -23,14 +24,15 @@ function App() {
 
   const submitPrompt = async event => {
     event.preventDefault();
+    console.log(decodingMethod);
     setLoading(true);
     let providedPrompt = document.getElementById("text-area-1").value;
     const response = await fetch(API_URL, {
-      method: "GET",
+      method: "POST",
       body: JSON.stringify(
         {
           prompt: providedPrompt,
-          n: 'two',
+          n,
         })
     });
     const promptData = await response.json();
@@ -59,12 +61,18 @@ function App() {
             <Form aria-label="" onSubmit={submitPrompt} className={loading ? 'blur' : ''}>
               <Stack gap={5}>
                 <TextArea
-                  labelText={promptData ? "Provide a prompt:" : "Original Prompt"}
+                  labelText={!promptData ? "Provide a prompt:" : "Original Prompt"}
                   helperText={rougeScores[0]}
                   rows={2} id="text-area-1"
                 />
                 {!promptData &&
                   <> 
+                  <NumberInput 
+                    id='n-input'
+                    defaultValue={5}
+                    label='Prompt Depth'
+                    onChange={e => setN(e.value)}
+                  />
                   <DecodingMethodRadioGroup setDecodingMethod={setDecodingMethod}/>
                   <Button type="submit">Submit</Button>
                   </>

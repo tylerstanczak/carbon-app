@@ -40,7 +40,7 @@ export const options = {
 export const WordAnalysis = ({ influentialWords }) => {
     let borderColors = []
     let backgroundColors = []
-    for (influence of influentialWords) {
+    for (let influence of influentialWords.values()) {
        if (influence > 0) {
         borderColors.push('rgb(53, 162, 235)');
         backgroundColors.push('rgba(53, 162, 235, 0.5)');
