@@ -28,37 +28,57 @@ export const options = {
   responsive: true,
   plugins: {
     legend: {
-      position: 'right',
+      display: true,
+      position: 'right'
     },
     title: {
       display: true,
       text: 'Word Influence Analysis',
     },
   },
+  labels: {
+    callbacks: {
+
+    }
+  },
+  tooltips: {
+    callbacks: {
+        label: function(tooltipItem, data) {
+            var dataset = data.datasets[tooltipItem.datasetIndex];
+            var index = tooltipItem.index;
+            return dataset.labels[index] + ': ' + dataset.data[index];
+        }
+    }
+}
 };
 
 export const WordAnalysis = ({ influentialWords }) => {
-    let borderColors = []
-    let backgroundColors = []
-    for (let influence of influentialWords.values()) {
-       if (influence > 0) {
-        borderColors.push('rgb(53, 162, 235)');
-        backgroundColors.push('rgba(53, 162, 235, 0.5)');
-       }
-       else {
-        borderColors.push('rgb(255, 99, 132)');
-        backgroundColors.push('rgba(255, 99, 132, 0.5)');
-       }
+  const sortedWords = [], positiveData = [], negativeData = [];
+  for (let word in influentialWords) {
+    sortedWords.push({ x: influentialWords[word], y: word });
+  }
+  sortedWords.sort(( a, b) => b.delta - a.delta);
+  sortedWords.forEach( word => {
+    if (word.x > 0) {
+      positiveData.push(word);
+    } else {
+      negativeData.push(word);
     }
-    
+  })
     const data = {
-        labels: Object.keys(influentialWords),
         datasets: [
           {
-            data: influentialWords.map(word => influentialWords[word]),
-            borderColor: borderColors,
-            backgroundColor: backgroundColors,
-          }
+            label: 'Positive Delta',
+            data: positiveData,
+            borderColor: 'rgb(53, 162, 235)', // Blue
+            backgroundColor: 'rgba(53, 162, 235, 0.5)', // Blue
+          },
+          {
+            label: 'Negative Delta',
+            data: negativeData,
+            borderColor: 'rgb(255, 99, 132)', // Red
+            backgroundColor: 'rgba(255, 99, 132, 0.5)', // Red
+          },
         ],
       };
   return <Bar options={options} data={data} />;

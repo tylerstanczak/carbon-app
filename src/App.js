@@ -5,105 +5,124 @@ import { OtherPrompts } from './components/OtherPrompts';
 import { WordAnalysis } from './components/WordAnalysis';
 
 import './App.css';
-import { useState } from 'react';
-const API_URL = process.env.API_URL || "localhost:5000";
+import pdJson from './promptData';
+import { useEffect, useState } from 'react';
+const API_URL = process.env.API_URL || "http://localhost:5000/";
 
 function App() {
   const [loading, setLoading] = useState(false);
   const [starts, setStarts] = useState({
-    lg: 7,
-    md: 4,
-    sm: 2
+    lg: 2, // 7
+    md: 1, // 4
+    sm: 0 // 2
   });
   const [decodingMethod, setDecodingMethod] = useState("Sample");
-  const [n, setN] = useState(0);
-  const [promptData, setPromptData] = useState(null);
+  const [depth, setDepth] = useState(5);
+  const [promptData, setPromptData] = useState(pdJson);
   const [bestPrompt, setBestPrompt] = useState('')
-  const [rougeScores, setRougeScores] = useState(["",""]);
+  const [rougeScores, setRougeScores] = useState([0, 0]);
   const [percentIncrease, setPercentIncrease] = useState(0);
+
+  useEffect(() => {
+    setRougeScores([promptData.original_rouge_score, promptData.best_rouge_score]);
+    setBestPrompt(promptData.best_prompt)
+    setPercentIncrease(promptData.percentage_increase);
+  }, [promptData.original_rouge_score, promptData.best_rouge_score, promptData.best_prompt, promptData.percentage_increase]);
 
   const submitPrompt = async event => {
     event.preventDefault();
     console.log(decodingMethod);
     setLoading(true);
     let providedPrompt = document.getElementById("text-area-1").value;
-    const response = await fetch(API_URL, {
+    console.log('provided prompt: ' + providedPrompt);
+    console.log('depth value: ' + depth)
+    console.log(API_URL);
+    try {
+      const response = await fetch(API_URL, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(
         {
           prompt: providedPrompt,
-          n,
+          n: depth,
         })
-    });
-    const promptData = await response.json();
-    setPromptData(promptData);
-    setRougeScores([`Rouge Score: ${promptData.original_rouge_score}`, `Rouge Score: ${promptData.best_rouge_score}`]);
-    setBestPrompt(promptData.best_prompt)
-    setPercentIncrease(promptData.percentage_increase);
-    setStarts({
-      lg: 3,
-      md: 2,
-      sm: 1
-    })
-    setLoading(false);
+      });
+    
+      const promptData = await response.json();
+      setPromptData(promptData);
+
+      setStarts({
+        lg: 1,
+        md: 1,
+        sm: 1
+      })
+      setLoading(false);
+    } catch (e) {
+      console.error(e);
+      setLoading(false);
+    }
   };
 
   return (
     <div>
       <CustomHeader />
-      <Grid fullWidth style={{ marginTop: '300px' }}>
+      <Grid fullWidth style={{ marginTop: '4%' }}>
         <Column
           lg={{ start: starts.lg, end: starts.lg+4 }}
           md={{ start: starts.md, end: starts.md+3 }}
           sm={{ start: starts.sm }}
+          style={{ marginTop: '40%' }}
         >
           <Stack gap={5}>
             <Form aria-label="" onSubmit={submitPrompt} className={loading ? 'blur' : ''}>
-              <Stack gap={5}>
+              <Stack gap={5} className='mb-2'>
                 <TextArea
                   labelText={!promptData ? "Provide a prompt:" : "Original Prompt"}
-                  helperText={rougeScores[0]}
+                  helperText={`Rouge Score: ${rougeScores[0]}`}
                   rows={2} id="text-area-1"
                 />
                 {!promptData &&
                   <> 
                   <NumberInput 
-                    id='n-input'
+                    id='depth-input'
                     defaultValue={5}
                     label='Prompt Depth'
-                    onChange={e => setN(e.value)}
+                    onChange={(e, { value }) => setDepth(value)}
                   />
                   <DecodingMethodRadioGroup setDecodingMethod={setDecodingMethod}/>
                   <Button type="submit">Submit</Button>
                   </>
                 }
               </Stack>
+              {bestPrompt &&
+                <Stack>
+                <TextArea
+                  labelText="Best prompt:"
+                  defaultValue={bestPrompt}
+                  helperText={`Rouge Score: ${rougeScores[1]}`}
+                  rows={3}
+                  id="text-area-2"
+                  className='mb-2'
+                />
+                <h5>{`Rouge Score increased by ${percentIncrease}%`}</h5>
+                <h6>{`${rougeScores[0]} -> ${rougeScores[1]}`}</h6>
+              </Stack>
+            }
             </Form>
-            {loading && <ProgressBar helperText="Optimizing Prompt"/>}
+            {loading && <ProgressBar label='' helperText="Optimizing Prompt"/>}
           </Stack>
         </Column>
         {promptData &&
-        <Column
-          lg={{ start: 9, end: 13 }}
-          md={{ start: 5, end: 8 }}
-          sm={{ start: 0 }}
-        >
-          <Stack gap={5}>
-            <TextArea
-              labelText="Optimized prompt:"
-              defaultValue={bestPrompt}
-              helperText={rougeScores[1]}
-              rows={16}
-              id="text-area-2"
-            />
-          </Stack>
-        </Column>}
-        {promptData &&
-          <>
-            <h4>{percentIncrease}</h4>
-            <OtherPrompts rows={promptData["optimized_rouge_scores_df"]} />
-            <WordAnalysis influentialWords={promptData["top_influential_words"]} />
-          </>
+            <Column
+              lg={{ start: 6, end: 16 }}
+              md={{ start: 4, end: 8 }}
+              sm={{ start: 0 }}
+            >
+              <OtherPrompts rows={promptData["optimized_rouge_scores_df"]} />
+              <WordAnalysis influentialWords={promptData["top_influential_words"]} />  
+            </Column>
         }
       </Grid>
     </div>
