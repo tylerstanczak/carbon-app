@@ -1,4 +1,4 @@
 promptData.js
 README.md
-/node_modules
-/build
+node_modules/
+build/
