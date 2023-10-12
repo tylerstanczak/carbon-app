@@ -108,7 +108,7 @@ function App() {
               </Stack>
             }
             </Form>
-            {loading && <ProgressBar label='' helperText="Optimizing Prompt"/>}
+            {loading && <ProgressBar label='' helperText="Optimusing Prompt"/>}
           </Stack>
         </Column>
         {promptData &&
