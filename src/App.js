@@ -6,7 +6,8 @@ import { WordAnalysis } from './components/WordAnalysis';
 
 import './App.css';
 import { useState } from 'react';
-const API_URL = "https://bxb-api-bxb-flask.apps.csmfsm.tec.ihost.com/";
+const API_URL = "http://bxb-api-bxb-flask.apps.csmfsm.tec.ihost.com/";
+
 
 function App() {
   const [loading, setLoading] = useState(false);
